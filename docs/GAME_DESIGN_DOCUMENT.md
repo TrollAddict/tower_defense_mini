@@ -108,7 +108,13 @@ once placed until the player removes them.
   (see §10).
 - **Spawn model:** single spawn point, wave-based; enemy count per wave escalates over
   time (§14).
-- **Escalation curve:** Every wave spawns 10% (rounded down) more enemies. This should be a configuration file rather than a hardcoded value
+- **Escalation curve:** Every wave spawns more enemies than the last, rounded down,
+  by a percentage read from config (`data/waves.json`'s `growth_rate_per_wave`,
+  currently 25% -- not the originally-specified 10%: at `base_enemy_count` 5,
+  `floor(5 * 1.10) == 5` is a fixed point, so 10% growth never actually grew the
+  count at all. The implementation also guarantees at least +1 per wave regardless of
+  the configured rate, so this can't silently reoccur at some other base-count/rate
+  combination later.)
 - **Aggro / targeting rules:** always path toward the castle via the current flow field.
   No alternate targeting state.
 - **Death/cleanup behavior:** despawn immediately on death (pooled, no corpse/decal

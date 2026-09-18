@@ -1,8 +1,8 @@
 #include "game/WaveDirector.hpp"
 
 #include <algorithm>
-#include <cmath>
 
+#include "core/WaveEscalation.hpp"
 #include "ecs/Components.hpp"
 
 namespace td {
@@ -62,8 +62,7 @@ void WaveDirector::startWave() {
     if (wave == 1) {
         baseCountForCurrentWave_ = config_.waves.baseEnemyCount;
     } else {
-        baseCountForCurrentWave_ =
-            std::max(1, static_cast<int>(std::floor(baseCountForCurrentWave_ * (1.0f + config_.waves.growthRatePerWave))));
+        baseCountForCurrentWave_ = nextWaveEnemyCount(baseCountForCurrentWave_, config_.waves.growthRatePerWave);
     }
     currentWaveEnemyCount_ = baseCountForCurrentWave_ * std::max(1, state_.difficulty().waveSizeMultiplier);
 

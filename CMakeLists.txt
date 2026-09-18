@@ -46,6 +46,7 @@ add_library(td_mini_core
   src/core/FlowField.cpp
   src/core/Config.cpp
   src/core/Movement.cpp
+  src/core/WaveEscalation.cpp
 )
 target_include_directories(td_mini_core PUBLIC src)
 target_link_libraries(td_mini_core PUBLIC EnTT::EnTT nlohmann_json::nlohmann_json)
