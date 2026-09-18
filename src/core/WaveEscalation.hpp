@@ -19,4 +19,11 @@ int nextWaveEnemyCount(int previousCount, float growthRatePerWave);
 // the way repeated integer floor() can.
 float escalatedEnemyHealth(float baseHealth, float growthRatePerWave, int waveNumber);
 
+// Wave N's enemy speed is baseSpeed * (1 + growthRatePer5Waves)^floor((N-1)/5) --
+// waves 1-5 get exactly the base value, waves 6-10 get one step of growth applied,
+// waves 11-15 get two steps, and so on. Same direct-from-wave-number computation as
+// escalatedEnemyHealth (no fixed-point trap to guard against), just stepped every 5
+// waves instead of compounding every single wave.
+float escalatedEnemySpeed(float baseSpeed, float growthRatePer5Waves, int waveNumber);
+
 } // namespace td

@@ -87,6 +87,42 @@ void testZeroGrowthRateHoldsHealthConstant() {
           "health escalation: a 0% growth rate holds health at the base value indefinitely, by design");
 }
 
+void testSpeedHoldsForFirstFiveWaves() {
+    for (int wave = 1; wave <= 5; ++wave) {
+        check(td::escalatedEnemySpeed(1.5f, 0.15f, wave) == 1.5f,
+              "speed escalation: waves 1-5 all get exactly the base speed, no growth applied yet");
+    }
+}
+
+void testSpeedStepsUpEveryFiveWaves() {
+    // wave 6 -> one step: 1.5 * 1.15^1 == 1.725
+    check(std::fabs(td::escalatedEnemySpeed(1.5f, 0.15f, 6) - 1.725f) < 0.001f,
+          "speed escalation: wave 6 applies exactly one growth step");
+    check(td::escalatedEnemySpeed(1.5f, 0.15f, 10) == td::escalatedEnemySpeed(1.5f, 0.15f, 6),
+          "speed escalation: waves 6-10 share the same one-step speed");
+    // wave 11 -> two steps: 1.5 * 1.15^2 == 1.98375
+    check(std::fabs(td::escalatedEnemySpeed(1.5f, 0.15f, 11) - 1.98375f) < 0.001f,
+          "speed escalation: wave 11 applies exactly two growth steps");
+}
+
+void testSpeedNeverDecreasesAcrossWaves() {
+    float previous = td::escalatedEnemySpeed(1.5f, 0.15f, 1);
+    bool everDecreased = false;
+    for (int wave = 2; wave <= 100; ++wave) {
+        const float speed = td::escalatedEnemySpeed(1.5f, 0.15f, wave);
+        if (speed < previous) {
+            everDecreased = true;
+        }
+        previous = speed;
+    }
+    check(!everDecreased, "speed escalation: speed is non-decreasing across a 100-wave run");
+}
+
+void testZeroGrowthRateHoldsSpeedConstant() {
+    check(td::escalatedEnemySpeed(1.5f, 0.0f, 50) == 1.5f,
+          "speed escalation: a 0% growth rate holds speed at the base value indefinitely, by design");
+}
+
 } // namespace
 
 int main() {
@@ -97,6 +133,10 @@ int main() {
     testHealthCompoundsExponentiallyByWave();
     testHealthNeverDecreasesAcrossWaves();
     testZeroGrowthRateHoldsHealthConstant();
+    testSpeedHoldsForFirstFiveWaves();
+    testSpeedStepsUpEveryFiveWaves();
+    testSpeedNeverDecreasesAcrossWaves();
+    testZeroGrowthRateHoldsSpeedConstant();
 
     if (failures > 0) {
         std::cerr << failures << " check(s) failed\n";

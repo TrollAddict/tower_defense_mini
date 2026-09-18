@@ -15,4 +15,9 @@ float escalatedEnemyHealth(float baseHealth, float growthRatePerWave, int waveNu
     return baseHealth * std::pow(1.0f + growthRatePerWave, static_cast<float>(exponent));
 }
 
+float escalatedEnemySpeed(float baseSpeed, float growthRatePer5Waves, int waveNumber) {
+    const int steps = std::max(0, waveNumber - 1) / 5;
+    return baseSpeed * std::pow(1.0f + growthRatePer5Waves, static_cast<float>(steps));
+}
+
 } // namespace td

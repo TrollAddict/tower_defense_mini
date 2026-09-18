@@ -4,5 +4,6 @@
   "spawn_interval_seconds": 0.5,
   "time_between_waves_seconds": 6.0,
   "initial_build_phase_seconds": 30.0,
-  "enemy_health_growth_rate_per_wave": 0.15
+  "enemy_health_growth_rate_per_wave": 0.15,
+  "enemy_speed_growth_rate_per_5_waves": 0.15
 }

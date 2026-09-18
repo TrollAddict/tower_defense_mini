@@ -117,8 +117,8 @@ once placed until the player removes them.
   (see §10).
 - **Spawn model:** single spawn point, wave-based; enemy count *and* enemy health per
   wave both escalate over time (§14).
-- **Escalation curve:** two independent dimensions, both config-driven
-  (`data/waves.json`), both compounding off the wave number rather than resetting:
+- **Escalation curve:** three independent dimensions, all config-driven
+  (`data/waves.json`), all compounding off the wave number rather than resetting:
   - **Count:** every wave spawns more enemies than the last, rounded down, by
     `growth_rate_per_wave` (currently 25% -- not the originally-specified 10%: at
     `base_enemy_count` 5, `floor(5 * 1.10) == 5` is a fixed point, so 10% growth never
@@ -131,6 +131,14 @@ once placed until the player removes them.
     (rounded) value, so it doesn't share the count escalation's fixed-point failure
     mode -- floating-point compounding has no equivalent stuck state to guard
     against.
+  - **Speed:** every enemy spawns with `base speed * (1 +
+    enemy_speed_growth_rate_per_5_waves)^floor((wave-1)/5)` (currently 15% per 5
+    waves) -- stepped rather than per-wave: waves 1-5 spawn at base speed, waves 6-10
+    get one growth step applied, waves 11-15 get two, and so on. Speed is now baked
+    into each enemy at spawn time (a `Speed` component) rather than read from
+    `EnemyConfig` directly at move time, the same way health already worked, so a
+    wave's already-spawned enemies keep the speed they were born with even after the
+    wave counter advances mid-wave.
 - **Aggro / targeting rules:** always path toward the castle via the current flow field.
   No alternate targeting state.
 - **Death/cleanup behavior:** despawn immediately on death (pooled, no corpse/decal

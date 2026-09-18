@@ -105,10 +105,13 @@ void WaveDirector::spawnEnemy() {
     const float escalatedHealth =
         escalatedEnemyHealth(config_.enemy.health, config_.waves.enemyHealthGrowthRatePerWave, state_.waveNumber());
     const float health = escalatedHealth * static_cast<float>(std::max(1, state_.difficulty().enemyHealthMultiplier));
+    const float speed = escalatedEnemySpeed(config_.enemy.speedTilesPerSecond,
+                                             config_.waves.enemySpeedGrowthRatePer5Waves, state_.waveNumber());
 
     entt::entity entity = registry_.create();
     registry_.emplace<Position>(entity, spawn.x + 0.5f, spawn.y + 0.5f);
     registry_.emplace<Health>(entity, health, health);
+    registry_.emplace<Speed>(entity, speed);
     registry_.emplace<EnemyTag>(entity);
     registry_.emplace<TintColor>(entity, kEnemyColor);
 }

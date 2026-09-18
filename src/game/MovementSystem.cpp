@@ -18,13 +18,13 @@ void updateMovement(entt::registry& registry, const Grid& grid, const FlowField&
     const CellCoord& castle = grid.castleCell();
     const float castleCenterX = castle.x + 0.5f;
     const float castleCenterY = castle.y + 0.5f;
-    const float speed = config.enemy.speedTilesPerSecond;
 
     std::vector<entt::entity> arrived;
 
-    auto view = registry.view<Position, EnemyTag>();
+    auto view = registry.view<Position, Speed, EnemyTag>();
     for (auto entity : view) {
         auto& pos = view.get<Position>(entity);
+        const float speed = view.get<Speed>(entity).tilesPerSecond;
 
         const float dx = castleCenterX - pos.x;
         const float dy = castleCenterY - pos.y;

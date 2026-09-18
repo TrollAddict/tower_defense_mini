@@ -15,6 +15,12 @@ struct Health {
     float max = 0.0f;
 };
 
+// Per-entity so each enemy keeps the speed it spawned with (GDD §5 escalation),
+// same reasoning as Health being per-entity rather than read from config directly.
+struct Speed {
+    float tilesPerSecond = 0.0f;
+};
+
 // Deliberately empty — GDD §5, only one enemy archetype, no per-enemy variant data.
 struct EnemyTag {};
 
