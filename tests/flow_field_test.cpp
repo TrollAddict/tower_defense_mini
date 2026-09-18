@@ -2,10 +2,13 @@
 // the whole game"). No framework dependency on purpose -- this project's only other
 // dependencies are entt/nlohmann-json/SFML, and pulling in a test framework for four
 // checks isn't worth it.
+#include <algorithm>
+#include <cmath>
 #include <iostream>
 
 #include "core/FlowField.hpp"
 #include "core/Grid.hpp"
+#include "core/Movement.hpp"
 
 namespace {
 
@@ -77,6 +80,54 @@ void testCornerToCornerAtFullScale() {
     check(!grid.isBuildable(255, 255), "full-scale corners: castle cell (bottom-right) rejects placement");
 }
 
+// Regression test for a bug where an enemy would visibly freeze wedged between two
+// diagonally-placed structures. Root cause: continuous (non-grid-locked) movement
+// adds dir.x*speed*dt and dir.y*speed*dt independently, so when squeezing through a
+// diagonal-only gap, one axis can cross its cell boundary before the other -- landing
+// the sampled cell inside a flanking wall for a frame, where FlowField has no
+// direction defined, permanently zeroing velocity. This simulates real per-frame
+// movement (the same math MovementSystem::updateMovement does) starting from a
+// deliberately asymmetric fractional position -- the exact condition that triggers
+// the bug -- and asserts the entity still crosses into the open diagonal cell instead
+// of freezing at the corner.
+void testCornerClippingDoesNotFreezeMovement() {
+    td::Grid grid(6, 6, td::CellCoord{0, 0}, td::CellCoord{5, 5});
+    // Walls at (3,2) and (2,3) leave a diagonal-only gap between (2,2) and (3,3).
+    grid.setCell(3, 2, td::CellType::Wall);
+    grid.setCell(2, 3, td::CellType::Wall);
+
+    td::FlowField field;
+    field.compute(grid);
+    check(field.isReachable(0, 0), "corner-clip regression: spawn reachable through the diagonal gap");
+
+    // Asymmetric fractional position inside cell (2,2): y is much closer to its
+    // boundary than x, so y crosses into row 3 (the wall's row) long before x
+    // crosses into column 3 -- this is exactly what used to freeze movement.
+    float x = 2.1f;
+    float y = 2.9f;
+    const float speed = 1.5f;
+    const float dt = 1.0f / 60.0f;
+
+    bool crossedTheGap = false;
+    for (int frame = 0; frame < 600 && !crossedTheGap; ++frame) {
+        const int cellX = std::clamp(static_cast<int>(std::floor(x)), 0, grid.width() - 1);
+        const int cellY = std::clamp(static_cast<int>(std::floor(y)), 0, grid.height() - 1);
+        const td::Vec2 dir = field.direction(cellX, cellY);
+
+        float newX = x + dir.x * speed * dt;
+        float newY = y + dir.y * speed * dt;
+        td::resolveCornerClipping(grid, cellX, cellY, newX, newY);
+        x = newX;
+        y = newY;
+
+        if (x >= 3.0f && y >= 3.0f) {
+            crossedTheGap = true;
+        }
+    }
+
+    check(crossedTheGap, "corner-clip regression: entity crosses the diagonal gap within 10s instead of freezing");
+}
+
 void testSpawnAndCastleCellsNotBuildable() {
     td::Grid grid(8, 8, td::CellCoord{0, 4}, td::CellCoord{7, 4});
     check(!grid.isBuildable(0, 4), "spawn cell rejects placement");
@@ -94,6 +145,7 @@ int main() {
     testFullWallSealsPath();
     testDiagonalGapNotBlocked();
     testCornerToCornerAtFullScale();
+    testCornerClippingDoesNotFreezeMovement();
     testSpawnAndCastleCellsNotBuildable();
 
     if (failures > 0) {

@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 
+#include "core/Movement.hpp"
 #include "ecs/Components.hpp"
 
 namespace td {
@@ -36,8 +37,11 @@ void updateMovement(entt::registry& registry, const Grid& grid, const FlowField&
         const int cellY = std::clamp(static_cast<int>(std::floor(pos.y)), 0, grid.height() - 1);
         const Vec2 dir = flowField.direction(cellX, cellY);
 
-        pos.x += dir.x * speed * dtSeconds;
-        pos.y += dir.y * speed * dtSeconds;
+        float newX = pos.x + dir.x * speed * dtSeconds;
+        float newY = pos.y + dir.y * speed * dtSeconds;
+        resolveCornerClipping(grid, cellX, cellY, newX, newY);
+        pos.x = newX;
+        pos.y = newY;
     }
 
     for (auto entity : arrived) {
