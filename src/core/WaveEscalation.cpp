@@ -10,4 +10,9 @@ int nextWaveEnemyCount(int previousCount, float growthRatePerWave) {
     return std::max(previousCount + 1, grown);
 }
 
+float escalatedEnemyHealth(float baseHealth, float growthRatePerWave, int waveNumber) {
+    const int exponent = std::max(0, waveNumber - 1);
+    return baseHealth * std::pow(1.0f + growthRatePerWave, static_cast<float>(exponent));
+}
+
 } // namespace td

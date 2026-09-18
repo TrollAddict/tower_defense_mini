@@ -73,7 +73,9 @@ void WaveDirector::startWave() {
 
 void WaveDirector::spawnEnemy() {
     const CellCoord& spawn = grid_.spawnCell();
-    const float health = config_.enemy.health * static_cast<float>(std::max(1, state_.difficulty().enemyHealthMultiplier));
+    const float escalatedHealth =
+        escalatedEnemyHealth(config_.enemy.health, config_.waves.enemyHealthGrowthRatePerWave, state_.waveNumber());
+    const float health = escalatedHealth * static_cast<float>(std::max(1, state_.difficulty().enemyHealthMultiplier));
 
     entt::entity entity = registry_.create();
     registry_.emplace<Position>(entity, spawn.x + 0.5f, spawn.y + 0.5f);

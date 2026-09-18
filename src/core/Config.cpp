@@ -65,6 +65,8 @@ GameConfig loadGameConfig(const std::string& dataDir) {
             j.value("time_between_waves_seconds", config.waves.timeBetweenWavesSeconds);
         config.waves.initialBuildPhaseSeconds =
             j.value("initial_build_phase_seconds", config.waves.initialBuildPhaseSeconds);
+        config.waves.enemyHealthGrowthRatePerWave =
+            j.value("enemy_health_growth_rate_per_wave", config.waves.enemyHealthGrowthRatePerWave);
     }
     {
         auto j = loadJson(dataDir + "/difficulty.json");

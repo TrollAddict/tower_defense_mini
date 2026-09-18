@@ -106,15 +106,22 @@ once placed until the player removes them.
 - **Unit size / footprint classes:** none needed — with one enemy type there's only one
   footprint, so the parent doc's per-size-class flow fields collapse to a single field
   (see §10).
-- **Spawn model:** single spawn point, wave-based; enemy count per wave escalates over
-  time (§14).
-- **Escalation curve:** Every wave spawns more enemies than the last, rounded down,
-  by a percentage read from config (`data/waves.json`'s `growth_rate_per_wave`,
-  currently 25% -- not the originally-specified 10%: at `base_enemy_count` 5,
-  `floor(5 * 1.10) == 5` is a fixed point, so 10% growth never actually grew the
-  count at all. The implementation also guarantees at least +1 per wave regardless of
-  the configured rate, so this can't silently reoccur at some other base-count/rate
-  combination later.)
+- **Spawn model:** single spawn point, wave-based; enemy count *and* enemy health per
+  wave both escalate over time (§14).
+- **Escalation curve:** two independent dimensions, both config-driven
+  (`data/waves.json`), both compounding off the wave number rather than resetting:
+  - **Count:** every wave spawns more enemies than the last, rounded down, by
+    `growth_rate_per_wave` (currently 25% -- not the originally-specified 10%: at
+    `base_enemy_count` 5, `floor(5 * 1.10) == 5` is a fixed point, so 10% growth never
+    actually grew the count at all. The implementation also guarantees at least +1
+    per wave regardless of the configured rate, so this can't silently reoccur at
+    some other base-count/rate combination later.)
+  - **Health:** each wave's enemies spawn with `base health * (1 +
+    enemy_health_growth_rate_per_wave)^(wave-1)` (currently 15%/wave). This is a
+    direct exponential off the wave number, not a recurrence off the previous wave's
+    (rounded) value, so it doesn't share the count escalation's fixed-point failure
+    mode -- floating-point compounding has no equivalent stuck state to guard
+    against.
 - **Aggro / targeting rules:** always path toward the castle via the current flow field.
   No alternate targeting state.
 - **Death/cleanup behavior:** despawn immediately on death (pooled, no corpse/decal
@@ -311,7 +318,7 @@ forgotten.
 
 ## 14. Difficulty & Balancing
 
-- **Difficulty levers:** wave size growth rate, spawn interval, enemy health. All configurable in the main menu with slider menu's from 1-99 mutliplier.
+- **Difficulty levers:** wave size growth rate, spawn interval, enemy health. All configurable in the main menu with slider menu's from 1-99 mutliplier. These multipliers stack on top of the baseline per-wave count/health escalation (§5) -- e.g. the enemy-health slider multiplies whatever `escalatedEnemyHealth` already computed for the current wave, it doesn't replace it.
 - **Balancing philosophy:** since sealing is impossible (§7) and structures are
   permanent (§5/§6), the only tension is "can your tower DPS + maze length kill Walkers
   before they reach the castle" — a much narrower balancing space than the parent doc's

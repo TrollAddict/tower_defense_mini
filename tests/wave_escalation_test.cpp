@@ -1,6 +1,7 @@
 // Regression coverage for GDD §5's wave escalation curve ("every wave spawns 10%
-// more enemies, rounded down"). No framework dependency, same reasoning as
-// flow_field_test.cpp.
+// more enemies, rounded down") and per-wave enemy health growth. No framework
+// dependency, same reasoning as flow_field_test.cpp.
+#include <cmath>
 #include <iostream>
 
 #include "core/WaveEscalation.hpp"
@@ -52,12 +53,50 @@ void testEscalationNeverPlateausOverManyWaves() {
     check(count > 100, "escalation: after 100 waves the count has grown well past its starting value");
 }
 
+void testWaveOneHealthIsExactlyBaseHealth() {
+    const float health = td::escalatedEnemyHealth(10.0f, 0.15f, 1);
+    check(health == 10.0f, "health escalation: wave 1 gets exactly the configured base health, no growth applied yet");
+}
+
+void testHealthCompoundsExponentiallyByWave() {
+    const float wave3 = td::escalatedEnemyHealth(10.0f, 0.15f, 3);
+    // wave 3 -> exponent 2: 10 * 1.15^2 == 13.225
+    check(std::fabs(wave3 - 13.225f) < 0.001f, "health escalation: wave 3 matches base * (1+rate)^(wave-1)");
+}
+
+void testHealthNeverDecreasesAcrossWaves() {
+    float previous = td::escalatedEnemyHealth(10.0f, 0.15f, 1);
+    bool everDecreased = false;
+    for (int wave = 2; wave <= 100; ++wave) {
+        const float health = td::escalatedEnemyHealth(10.0f, 0.15f, wave);
+        if (health < previous) {
+            everDecreased = true;
+            break;
+        }
+        previous = health;
+    }
+    check(!everDecreased, "health escalation: health is non-decreasing across a 100-wave run");
+    check(previous > 10.0f * 100.0f, "health escalation: after 100 waves health has grown by more than 100x");
+}
+
+void testZeroGrowthRateHoldsHealthConstant() {
+    // A 0% growth rate is a legitimate config value (health escalation off) and
+    // shouldn't be treated as a bug the way the count's floor()-based growth was --
+    // there's no fixed-point trap here to guard against (see WaveEscalation.hpp).
+    check(td::escalatedEnemyHealth(10.0f, 0.0f, 50) == 10.0f,
+          "health escalation: a 0% growth rate holds health at the base value indefinitely, by design");
+}
+
 } // namespace
 
 int main() {
     testOldConfigWouldHaveStalledWithoutTheGuard();
     testCurrentConfigGrowsPastTheGuardFloor();
     testEscalationNeverPlateausOverManyWaves();
+    testWaveOneHealthIsExactlyBaseHealth();
+    testHealthCompoundsExponentiallyByWave();
+    testHealthNeverDecreasesAcrossWaves();
+    testZeroGrowthRateHoldsHealthConstant();
 
     if (failures > 0) {
         std::cerr << failures << " check(s) failed\n";
