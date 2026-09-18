@@ -60,6 +60,23 @@ void testDiagonalGapNotBlocked() {
           "diagonal gap: spawn still reachable through a diagonally-adjacent pair of blockers");
 }
 
+// Matches the actual game's layout (Game::startNewRun): 256x256, spawn in the
+// top-left corner, castle in the bottom-right. Corner placement means each has only
+// 3 in-bounds neighbors instead of an edge cell's 5 or an interior cell's 8 -- worth
+// covering explicitly rather than assuming the edge-cell tests above generalize.
+void testCornerToCornerAtFullScale() {
+    td::Grid grid(256, 256, td::CellCoord{0, 0}, td::CellCoord{255, 255});
+    td::FlowField field;
+    field.compute(grid);
+
+    check(field.isReachable(0, 0), "full-scale corners: spawn (top-left) reachable from castle BFS");
+    check(field.distance(255, 255) == 0, "full-scale corners: castle cell has distance 0 from itself");
+    check(field.distance(0, 0) == 255, "full-scale corners: corner-to-corner distance is 255 (pure diagonal path)");
+
+    check(!grid.isBuildable(0, 0), "full-scale corners: spawn cell (top-left) rejects placement");
+    check(!grid.isBuildable(255, 255), "full-scale corners: castle cell (bottom-right) rejects placement");
+}
+
 void testSpawnAndCastleCellsNotBuildable() {
     td::Grid grid(8, 8, td::CellCoord{0, 4}, td::CellCoord{7, 4});
     check(!grid.isBuildable(0, 4), "spawn cell rejects placement");
@@ -76,6 +93,7 @@ int main() {
     testOpenGridFullyReachable();
     testFullWallSealsPath();
     testDiagonalGapNotBlocked();
+    testCornerToCornerAtFullScale();
     testSpawnAndCastleCellsNotBuildable();
 
     if (failures > 0) {

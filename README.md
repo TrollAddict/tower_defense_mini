@@ -64,9 +64,9 @@ ctest --test-dir build --output-on-failure
 
 - **Save/load is not implemented.** The GDD's technical architecture section
   (§11) calls for JSON save/load; it isn't part of the §16 MVP definition, so it was
-  left out of this first build. The map is also fixed/hand-authored (one spawn point
-  at the left edge, one castle at the right edge, both row-centered), so there's no
-  persistent run to lose between sessions yet.
+  left out of this first build. The map is also fixed/hand-authored (spawn point in
+  the top-left corner, castle in the bottom-right), so there's no persistent run to
+  lose between sessions yet.
 - **No live placement preview** (GDD §7 calls this optional QoL at this scope, since
   the real recompute is cheap enough to just run on every placement and revert on
   failure). Currently the only feedback on a rejected placement is the on-screen

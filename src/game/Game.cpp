@@ -176,7 +176,7 @@ void Game::renderMenu() {
 
 void Game::startNewRun() {
     registry_.clear();
-    grid_.emplace(256, 256, CellCoord{0, 128}, CellCoord{255, 128});
+    grid_.emplace(256, 256, CellCoord{0, 0}, CellCoord{255, 255});
     flowField_.compute(*grid_);
     gameState_.emplace(config_);
     gameState_->difficulty() = menuDifficulty_;
@@ -184,8 +184,14 @@ void Game::startNewRun() {
     waveDirector_.emplace(*grid_, registry_, *gameState_, config_);
     selectedStructure_ = StructureType::Tower;
 
-    cameraCenter_ = sf::Vector2f(grid_->width() * tileSizePx_ / 2.0f, grid_->height() * tileSizePx_ / 2.0f);
-    zoom_ = fitZoom();
+    // Start zoomed in enough to actually see towers/enemies (tile == 1 screen px at
+    // zoom 1, since tileSizePx_ is already in world-space pixels) and centered on the
+    // spawn point, where the action starts. fitZoom() (bound to Home) is for the
+    // on-demand whole-map overview GDD §12 asks for -- it was never meant to be the
+    // default view, since at 256 tiles across it shrinks every entity to sub-pixel.
+    const CellCoord& spawn = grid_->spawnCell();
+    cameraCenter_ = sf::Vector2f((spawn.x + 0.5f) * tileSizePx_, (spawn.y + 0.5f) * tileSizePx_);
+    zoom_ = 1.0f;
 
     state_ = AppState::Playing;
 }
