@@ -1,0 +1,6 @@
+{
+  "currency_name": "bone",
+  "starting_currency": 10,
+  "kill_reward": 1,
+  "wave_clear_bonus_equals_wave_number": true
+}

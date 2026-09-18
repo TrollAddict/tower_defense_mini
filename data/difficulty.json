@@ -1,0 +1,7 @@
+{
+  "wave_size_multiplier": 1,
+  "spawn_interval_multiplier": 1,
+  "enemy_health_multiplier": 1,
+  "min_value": 1,
+  "max_value": 99
+}

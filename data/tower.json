@@ -1,0 +1,7 @@
+{
+  "name": "Basic Tower",
+  "range_tiles": 2.0,
+  "damage": 2.0,
+  "attacks_per_second": 1.0,
+  "cost": 5
+}

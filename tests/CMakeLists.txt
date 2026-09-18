@@ -1,0 +1,3 @@
+add_executable(flow_field_test flow_field_test.cpp)
+target_link_libraries(flow_field_test PRIVATE td_mini_core)
+add_test(NAME flow_field_test COMMAND flow_field_test)

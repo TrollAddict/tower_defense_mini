@@ -1,0 +1,7 @@
+{
+  "name": "Walker",
+  "health": 10.0,
+  "speed_tiles_per_second": 1.5,
+  "castle_damage": 1.0,
+  "kill_reward": 1
+}
