@@ -271,8 +271,11 @@ CellCoord Game::pixelToCell(sf::Vector2i pixel) const {
 }
 
 void Game::handlePlayingClick(sf::Vector2i pixel, bool isLeftButton) {
-    if (pixel.y < 100) return; // reserve the top HUD strip (now two HUD lines + help text) from placement clicks
-
+    // No reserved strip here: unlike the main menu's Start button, the Playing-state
+    // HUD (RenderSystem::renderHud) is read-only text with nothing to click, so there
+    // is nothing to protect a click from. Blocking clicks in a fixed top-of-window
+    // pixel band used to silently eat placement/removal clicks on any map cell that
+    // happened to scroll under it after panning the camera.
     const CellCoord cell = pixelToCell(pixel);
     if (!grid_->inBounds(cell.x, cell.y)) return;
 
