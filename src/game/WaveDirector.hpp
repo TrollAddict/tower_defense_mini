@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <entt/entt.hpp>
 
 #include "core/Config.hpp"
@@ -26,10 +28,23 @@ public:
     // next update() tick. A no-op outside the Intermission phase.
     void skipIntermission();
 
+    // Fast-forwards a straggler-dominated wave instead of making the player wait for
+    // the last few enemies to walk the rest of a (possibly very long) path: every
+    // currently-alive enemy from this wave is converted straight to castle damage and
+    // despawned, any of this wave's enemies that hadn't spawned yet are cancelled, and
+    // the wave is immediately marked cleared (same currency bonus as a natural clear
+    // -- the cost of giving up is the castle damage taken, not a forfeited bonus). A
+    // no-op during Intermission, since there's no active wave to give up on. Returns
+    // how many enemies were converted (0 if it was a no-op).
+    int giveUp();
+
     // How many enemies of the current/next wave have yet to spawn -- used by the HUD.
     int enemiesRemainingToSpawn() const { return currentWaveEnemyCount_ - enemiesSpawnedThisWave_; }
     float intermissionSecondsRemaining() const { return intermissionTimer_; }
     bool isInIntermission() const { return phase_ == Phase::Intermission; }
+
+    const std::string& notification() const { return notification_; }
+    bool hasActiveNotification() const { return notificationTimer_ > 0.0f; }
 
 private:
     enum class Phase { Intermission, Spawning, WaitingForClear };
@@ -45,11 +60,14 @@ private:
     int enemiesSpawnedThisWave_ = 0;
     float spawnTimer_ = 0.0f;
     float intermissionTimer_; // set from config.waves.initialBuildPhaseSeconds in the constructor
+    std::string notification_;
+    float notificationTimer_ = 0.0f;
 
     void startWave();
     void spawnEnemy();
     float effectiveSpawnInterval() const;
     int aliveEnemyCount() const;
+    void setNotification(const std::string& message);
 };
 
 } // namespace td

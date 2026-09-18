@@ -87,6 +87,8 @@ void Game::handleEvents() {
                     towerUpgrades_->purchase(UpgradeStat::AttackSpeed, *gameState_);
                 } else if (keyPressed->code == sf::Keyboard::Key::Num5) {
                     towerUpgrades_->purchase(UpgradeStat::Range, *gameState_);
+                } else if (keyPressed->code == sf::Keyboard::Key::G) {
+                    waveDirector_->giveUp();
                 }
             } else if (state_ == AppState::GameOver) {
                 if (keyPressed->code == sf::Keyboard::Key::Enter) {
@@ -307,6 +309,8 @@ void Game::renderPlaying() {
         hud.notification = placement_->notification();
     } else if (towerUpgrades_->hasActiveNotification()) {
         hud.notification = towerUpgrades_->notification();
+    } else if (waveDirector_->hasActiveNotification()) {
+        hud.notification = waveDirector_->notification();
     }
     renderHud(window_, font_, hud);
 }

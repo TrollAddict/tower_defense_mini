@@ -1,6 +1,7 @@
 #include "game/WaveDirector.hpp"
 
 #include <algorithm>
+#include <vector>
 
 #include "core/WaveEscalation.hpp"
 #include "ecs/Components.hpp"
@@ -9,6 +10,7 @@ namespace td {
 
 namespace {
 constexpr TintColor kEnemyColor{210, 60, 60};
+constexpr float kNotificationSeconds = 2.5f;
 }
 
 WaveDirector::WaveDirector(Grid& grid, entt::registry& registry, GameState& state, const GameConfig& config)
@@ -24,7 +26,34 @@ void WaveDirector::skipIntermission() {
     }
 }
 
+int WaveDirector::giveUp() {
+    if (phase_ == Phase::Intermission) {
+        return 0; // nothing active to give up on
+    }
+
+    enemiesSpawnedThisWave_ = currentWaveEnemyCount_; // cancel any of this wave's unspawned enemies
+
+    std::vector<entt::entity> stragglers(registry_.view<EnemyTag>().begin(), registry_.view<EnemyTag>().end());
+    for (auto entity : stragglers) {
+        state_.damageCastle(config_.enemy.castleDamage);
+        registry_.destroy(entity);
+    }
+
+    state_.addCurrency(state_.waveNumber()); // same wave-clear bonus as a natural clear (GDD §8)
+    intermissionTimer_ = config_.waves.timeBetweenWavesSeconds;
+    phase_ = Phase::Intermission;
+
+    const int converted = static_cast<int>(stragglers.size());
+    setNotification("Gave up on wave " + std::to_string(state_.waveNumber()) + " -- " + std::to_string(converted) +
+                     (converted == 1 ? " enemy hit the castle" : " enemies hit the castle"));
+    return converted;
+}
+
 void WaveDirector::update(float dtSeconds) {
+    if (notificationTimer_ > 0.0f) {
+        notificationTimer_ -= dtSeconds;
+    }
+
     switch (phase_) {
         case Phase::Intermission:
             intermissionTimer_ -= dtSeconds;
@@ -91,6 +120,11 @@ float WaveDirector::effectiveSpawnInterval() const {
 
 int WaveDirector::aliveEnemyCount() const {
     return static_cast<int>(registry_.view<EnemyTag>().size());
+}
+
+void WaveDirector::setNotification(const std::string& message) {
+    notification_ = message;
+    notificationTimer_ = kNotificationSeconds;
 }
 
 } // namespace td

@@ -66,6 +66,15 @@
   not a mission with a win state.
 - **Lose condition(s):** castle HP reaches 0 (an enemy reaching the castle damages it,
   then despawns).
+- **Give up on a wave (`G`):** the 256-tile map means a single enemy that slips past
+  the maze can take a very long time to actually walk to the castle and despawn --
+  found in playtesting to be a real dead-air problem, not just a theoretical one. `G`
+  fast-forwards a straggler-dominated wave: every enemy still alive is converted
+  straight to castle damage and despawned, any unspawned remainder of that wave is
+  cancelled, and the wave is marked cleared (same currency bonus as letting it finish
+  naturally -- the cost is the castle damage taken, not a forfeited bonus, so giving
+  up early while many enemies are still alive is a real tradeoff, not a free skip).
+  A no-op during an intermission, since there's nothing active to give up on.
 - **Session length target:** 10-30 min.
 
 ## 4. World & Map

@@ -52,6 +52,11 @@ ctest --test-dir build --output-on-failure
   - `Home` -- zoom out to fit the whole map
   - `Enter` -- skip the current intermission (including the initial 30s build phase)
     and start the next wave immediately
+  - `G` -- give up on the current wave: every enemy still alive from it is converted
+    straight into castle damage and despawned (skipping the long walk from wherever
+    they are to the castle), any of that wave's enemies that hadn't spawned yet are
+    cancelled, and the usual wave-clear currency bonus is still awarded. No-op during
+    an intermission -- there's no active wave to give up on.
   - `Esc` -- abandon the run and return to the main menu
 
 ## Project layout

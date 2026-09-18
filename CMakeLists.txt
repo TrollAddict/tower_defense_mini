@@ -41,6 +41,10 @@ set(JSON_BuildTests OFF CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(SFML EnTT nlohmann_json)
 
+# GameState/WaveDirector live under src/game/ but, like everything in src/core/,
+# depend only on entt/nlohmann-json, not SFML -- included here (rather than only in
+# the tower_defense_mini executable below) so tests/ can drive WaveDirector directly
+# instead of just its pure-math helpers.
 add_library(td_mini_core
   src/core/Grid.cpp
   src/core/FlowField.cpp
@@ -48,6 +52,8 @@ add_library(td_mini_core
   src/core/Movement.cpp
   src/core/WaveEscalation.cpp
   src/core/TowerUpgradeMath.cpp
+  src/game/GameState.cpp
+  src/game/WaveDirector.cpp
 )
 target_include_directories(td_mini_core PUBLIC src)
 target_link_libraries(td_mini_core PUBLIC EnTT::EnTT nlohmann_json::nlohmann_json)
@@ -57,9 +63,7 @@ target_compile_definitions(td_mini_core PUBLIC
 
 add_executable(tower_defense_mini
   src/main.cpp
-  src/game/GameState.cpp
   src/game/PlacementController.cpp
-  src/game/WaveDirector.cpp
   src/game/TowerUpgrades.cpp
   src/game/CombatSystem.cpp
   src/game/MovementSystem.cpp

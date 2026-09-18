@@ -162,8 +162,8 @@ void renderHud(sf::RenderWindow& window, sf::Font& font, const HudInfo& info) {
     window.draw(hudText);
 
     sf::Text helpText(font,
-                       "LMB: place selected  RMB: remove  1: Tower  2: Wall  3/4/5: upgrade Dmg/AtkSpd/Range  "
-                       "ENTER: skip intermission  ESC: menu",
+                       "LMB: place selected  RMB: remove  1: Tower  2: Wall  3/4/5: upgrade Dmg/AtkSpd/Range\n"
+                       "ENTER: skip intermission  G: give up on wave (stragglers hit the castle)  ESC: menu",
                        13);
     helpText.setPosition(sf::Vector2f(10.0f, 54.0f));
     helpText.setFillColor(sf::Color(180, 180, 180));
@@ -173,7 +173,7 @@ void renderHud(sf::RenderWindow& window, sf::Font& font, const HudInfo& info) {
         sf::Text note(font, info.notification, 18);
         note.setFillColor(sf::Color(255, 120, 120));
         const auto bounds = note.getLocalBounds();
-        note.setPosition(sf::Vector2f((window.getSize().x - bounds.size.x) / 2.0f, 76.0f));
+        note.setPosition(sf::Vector2f((window.getSize().x - bounds.size.x) / 2.0f, 98.0f));
         window.draw(note);
     }
 }
