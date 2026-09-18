@@ -79,6 +79,8 @@ void Game::handleEvents() {
                     state_ = AppState::MainMenu;
                 } else if (keyPressed->code == sf::Keyboard::Key::Home) {
                     zoom_ = fitZoom();
+                } else if (keyPressed->code == sf::Keyboard::Key::Enter) {
+                    waveDirector_->skipIntermission();
                 }
             } else if (state_ == AppState::GameOver) {
                 if (keyPressed->code == sf::Keyboard::Key::Enter) {

@@ -63,6 +63,8 @@ GameConfig loadGameConfig(const std::string& dataDir) {
         config.waves.spawnIntervalSeconds = j.value("spawn_interval_seconds", config.waves.spawnIntervalSeconds);
         config.waves.timeBetweenWavesSeconds =
             j.value("time_between_waves_seconds", config.waves.timeBetweenWavesSeconds);
+        config.waves.initialBuildPhaseSeconds =
+            j.value("initial_build_phase_seconds", config.waves.initialBuildPhaseSeconds);
     }
     {
         auto j = loadJson(dataDir + "/difficulty.json");

@@ -36,6 +36,7 @@ struct WaveConfig {
     float growthRatePerWave = 0.10f;
     float spawnIntervalSeconds = 0.75f;
     float timeBetweenWavesSeconds = 6.0f;
+    float initialBuildPhaseSeconds = 30.0f;
 };
 
 struct DifficultyConfig {

@@ -143,7 +143,7 @@ void renderHud(sf::RenderWindow& window, sf::Font& font, const HudInfo& info) {
             oss << "   Spawning: " << info.waveDirector->enemiesRemainingToSpawn() << " left";
         } else if (info.waveDirector->intermissionSecondsRemaining() > 0.0f) {
             oss << "   Next wave in: " << static_cast<int>(info.waveDirector->intermissionSecondsRemaining()) + 1
-                << "s";
+                << "s (ENTER to skip)";
         }
     }
 
@@ -152,7 +152,8 @@ void renderHud(sf::RenderWindow& window, sf::Font& font, const HudInfo& info) {
     hudText.setFillColor(sf::Color::White);
     window.draw(hudText);
 
-    sf::Text helpText(font, "LMB: place selected  RMB: remove  1: Tower  2: Wall  ESC: menu", 13);
+    sf::Text helpText(font, "LMB: place selected  RMB: remove  1: Tower  2: Wall  ENTER: skip intermission  ESC: menu",
+                       13);
     helpText.setPosition(sf::Vector2f(10.0f, 32.0f));
     helpText.setFillColor(sf::Color(180, 180, 180));
     window.draw(helpText);

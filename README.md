@@ -47,6 +47,8 @@ ctest --test-dir build --output-on-failure
   - `WASD` / arrow keys -- pan the camera
   - Mouse wheel -- zoom
   - `Home` -- zoom out to fit the whole map
+  - `Enter` -- skip the current intermission (including the initial 30s build phase)
+    and start the next wave immediately
   - `Esc` -- abandon the run and return to the main menu
 
 ## Project layout

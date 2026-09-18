@@ -12,7 +12,17 @@ constexpr TintColor kEnemyColor{210, 60, 60};
 }
 
 WaveDirector::WaveDirector(Grid& grid, entt::registry& registry, GameState& state, const GameConfig& config)
-    : grid_(grid), registry_(registry), state_(state), config_(config) {}
+    : grid_(grid),
+      registry_(registry),
+      state_(state),
+      config_(config),
+      intermissionTimer_(config.waves.initialBuildPhaseSeconds) {}
+
+void WaveDirector::skipIntermission() {
+    if (phase_ == Phase::Intermission) {
+        intermissionTimer_ = 0.0f;
+    }
+}
 
 void WaveDirector::update(float dtSeconds) {
     switch (phase_) {
