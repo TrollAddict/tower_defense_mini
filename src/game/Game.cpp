@@ -38,6 +38,9 @@ Game::Game() : window_(sf::VideoMode({1280u, 720u}), "Tower Defense Mini"), conf
     if (!font_.openFromFile(std::string(TD_MINI_ASSETS_DIR) + "/DejaVuSans.ttf")) {
         throw std::runtime_error("Failed to load font from " TD_MINI_ASSETS_DIR "/DejaVuSans.ttf");
     }
+    if (!textures_.load(TD_MINI_ASSETS_DIR)) {
+        throw std::runtime_error("Failed to load tileset/tower/wall/enemy textures from " TD_MINI_ASSETS_DIR);
+    }
     menuDifficulty_ = config_.difficulty;
 }
 
@@ -188,6 +191,9 @@ void Game::startNewRun() {
     registry_.clear();
     grid_.emplace(256, 256, CellCoord{0, 0}, CellCoord{255, 255});
     flowField_.compute(*grid_);
+    if (!textures_.buildFloor(*grid_, tileSizePx_)) {
+        throw std::runtime_error("Failed to build the floor vertex buffer");
+    }
     gameState_.emplace(config_);
     gameState_->difficulty() = menuDifficulty_;
     placement_.emplace(*grid_, flowField_, registry_, *gameState_, config_);
@@ -297,7 +303,8 @@ void Game::renderPlaying() {
     const sf::View gameView(cameraCenter_,
                              sf::Vector2f(window_.getSize().x * zoom_, window_.getSize().y * zoom_));
     window_.setView(gameView);
-    renderWorld(window_, *grid_, registry_, frameShots_, tileSizePx_);
+    const CellCoord& spawn = grid_->spawnCell();
+    renderWorld(window_, *grid_, registry_, frameShots_, flowField_.pathFrom(spawn.x, spawn.y), textures_, tileSizePx_);
 
     window_.setView(window_.getDefaultView());
     HudInfo hud;

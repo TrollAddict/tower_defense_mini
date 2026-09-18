@@ -342,6 +342,17 @@ forgotten.
 
 - **Visual style:** pixel art to stay consistent with parent doc,
   but placeholder rectangles are fine for the pathfinding-proving MVP.
+  **Implemented:** `WorldTextures` (`RenderSystem`) loads `assets/TX Tileset Grass.png`
+  plus 32x32 `tower.png` and `wall.png`, and the first 32x64 frame of `TX Player.png`
+  for the enemy (feet anchored just below the cell center, drawn back-to-front by y,
+  health bar above the head). All drawn untinted, scaled to the tile size. Floor: each of the 256x256 cells gets a grass tile picked at random from the
+  top half of the tileset (8x4 variants of 32px), built once per run into a GPU vertex
+  buffer. Path: the current spawn-to-castle route (`FlowField::pathFrom`, i.e. exactly
+  the cells enemies walk) is paved with the stone slabs from the tileset's bottom-left;
+  each path cell is a 2x2 of random 16px slabs (only the mostly-intact ones), so it
+  updates live as the player reroutes the maze. Variant choice is a hash of the cell,
+  so it's random-looking but stable. The spawn/castle markers and coarse grid lines are
+  still drawn as overlays.
 - **Color language:** reuse parent doc's cool-to-warm friendly-to-enemy
   gradient if/when real art lands; irrelevant to placeholder-rectangle prototyping.
 - **Reference art:** `TODO`.

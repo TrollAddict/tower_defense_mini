@@ -32,10 +32,19 @@ public:
     // castle. Zero vector if unreachable or already at the castle.
     Vec2 direction(int x, int y) const;
 
+    // The cells an enemy starting at (x, y) walks through, following direction() one
+    // cell at a time down to the castle (both ends included). Empty if (x, y) is
+    // unreachable.
+    std::vector<CellCoord> pathFrom(int x, int y) const;
+
 private:
     int width_ = 0;
     int height_ = 0;
     std::vector<int> distance_;
+
+    // Offset to the lowest-distance neighbor, or {0, 0} if there is none (castle or
+    // unreachable).
+    std::pair<int, int> bestStep(int x, int y) const;
 
     int index(int x, int y) const { return y * width_ + x; }
     bool inBounds(int x, int y) const { return x >= 0 && y >= 0 && x < width_ && y < height_; }

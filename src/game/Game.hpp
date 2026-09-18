@@ -11,6 +11,7 @@
 #include "game/CombatSystem.hpp"
 #include "game/GameState.hpp"
 #include "game/PlacementController.hpp"
+#include "game/RenderSystem.hpp"
 #include "game/TowerUpgrades.hpp"
 #include "game/WaveDirector.hpp"
 
@@ -30,6 +31,7 @@ public:
 private:
     sf::RenderWindow window_;
     sf::Font font_;
+    WorldTextures textures_;
     GameConfig config_;
     AppState state_ = AppState::MainMenu;
 

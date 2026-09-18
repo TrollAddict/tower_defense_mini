@@ -140,6 +140,25 @@ void testSpawnAndCastleCellsNotBuildable() {
 
 } // namespace
 
+void testPathFromFollowsFlowFieldToCastle() {
+    td::Grid grid(10, 10, td::CellCoord{0, 5}, td::CellCoord{9, 5});
+    td::FlowField field;
+    field.compute(grid);
+
+    const auto path = field.pathFrom(grid.spawnCell().x, grid.spawnCell().y);
+    check(!path.empty() && path.front() == grid.spawnCell(), "pathFrom: starts at the requested cell");
+    check(!path.empty() && path.back() == grid.castleCell(), "pathFrom: ends at the castle");
+    check(static_cast<int>(path.size()) == field.distance(0, 5) + 1,
+          "pathFrom: one cell per BFS step (open grid, so the shortest route)");
+
+    // Seal the castle off entirely: no route exists, so no path.
+    td::Grid sealed(5, 5, td::CellCoord{0, 2}, td::CellCoord{4, 2});
+    for (int y = 0; y < 5; ++y) sealed.setCell(2, y, td::CellType::Wall);
+    td::FlowField sealedField;
+    sealedField.compute(sealed);
+    check(sealedField.pathFrom(0, 2).empty(), "pathFrom: unreachable start gives an empty path");
+}
+
 int main() {
     testOpenGridFullyReachable();
     testFullWallSealsPath();
@@ -147,6 +166,7 @@ int main() {
     testCornerToCornerAtFullScale();
     testCornerClippingDoesNotFreezeMovement();
     testSpawnAndCastleCellsNotBuildable();
+    testPathFromFollowsFlowFieldToCastle();
 
     if (failures > 0) {
         std::cerr << failures << " check(s) failed\n";

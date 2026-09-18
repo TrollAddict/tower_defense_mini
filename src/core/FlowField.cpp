@@ -58,14 +58,13 @@ int FlowField::distance(int x, int y) const {
     return distance_[index(x, y)];
 }
 
-Vec2 FlowField::direction(int x, int y) const {
-    if (!inBounds(x, y)) return Vec2{0.0f, 0.0f};
+std::pair<int, int> FlowField::bestStep(int x, int y) const {
+    if (!inBounds(x, y)) return {0, 0};
     const int myDist = distance_[index(x, y)];
-    if (myDist == kUnreachable || myDist == 0) return Vec2{0.0f, 0.0f};
+    if (myDist == kUnreachable || myDist == 0) return {0, 0};
 
     int bestDist = myDist;
-    int bestDx = 0;
-    int bestDy = 0;
+    std::pair<int, int> best{0, 0};
     for (const auto& [dx, dy] : kOffsets) {
         const int nx = x + dx;
         const int ny = y + dy;
@@ -74,14 +73,31 @@ Vec2 FlowField::direction(int x, int y) const {
         if (nd == kUnreachable) continue;
         if (nd < bestDist) {
             bestDist = nd;
-            bestDx = dx;
-            bestDy = dy;
+            best = {dx, dy};
         }
     }
+    return best;
+}
 
+Vec2 FlowField::direction(int x, int y) const {
+    const auto [bestDx, bestDy] = bestStep(x, y);
     if (bestDx == 0 && bestDy == 0) return Vec2{0.0f, 0.0f};
     const float len = std::sqrt(static_cast<float>(bestDx * bestDx + bestDy * bestDy));
     return Vec2{static_cast<float>(bestDx) / len, static_cast<float>(bestDy) / len};
+}
+
+std::vector<CellCoord> FlowField::pathFrom(int x, int y) const {
+    std::vector<CellCoord> path;
+    if (!isReachable(x, y)) return path;
+    path.push_back(CellCoord{x, y});
+    while (true) {
+        const auto [dx, dy] = bestStep(x, y);
+        if (dx == 0 && dy == 0) break;
+        x += dx;
+        y += dy;
+        path.push_back(CellCoord{x, y});
+    }
+    return path;
 }
 
 } // namespace td
