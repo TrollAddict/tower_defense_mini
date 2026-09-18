@@ -1,0 +1,5 @@
+{
+  "damage": { "increment": 1.0, "base_cost": 8, "cost_growth": 1.5 },
+  "attack_speed": { "increment": 0.25, "base_cost": 8, "cost_growth": 1.5 },
+  "range": { "increment": 0.5, "base_cost": 10, "cost_growth": 1.5 }
+}

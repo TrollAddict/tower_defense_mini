@@ -47,6 +47,7 @@ add_library(td_mini_core
   src/core/Config.cpp
   src/core/Movement.cpp
   src/core/WaveEscalation.cpp
+  src/core/TowerUpgradeMath.cpp
 )
 target_include_directories(td_mini_core PUBLIC src)
 target_link_libraries(td_mini_core PUBLIC EnTT::EnTT nlohmann_json::nlohmann_json)
@@ -59,6 +60,7 @@ add_executable(tower_defense_mini
   src/game/GameState.cpp
   src/game/PlacementController.cpp
   src/game/WaveDirector.cpp
+  src/game/TowerUpgrades.cpp
   src/game/CombatSystem.cpp
   src/game/MovementSystem.cpp
   src/game/RenderSystem.cpp

@@ -8,6 +8,7 @@
 #include "core/Grid.hpp"
 #include "game/CombatSystem.hpp"
 #include "game/GameState.hpp"
+#include "game/TowerUpgrades.hpp"
 #include "game/WaveDirector.hpp"
 
 namespace td {
@@ -24,6 +25,7 @@ struct HudInfo {
     const GameConfig* config = nullptr;
     const GameState* state = nullptr;
     const WaveDirector* waveDirector = nullptr;
+    const TowerUpgrades* upgrades = nullptr;
     std::string notification;
 };
 

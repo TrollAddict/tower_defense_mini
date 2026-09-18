@@ -76,6 +76,19 @@ GameConfig loadGameConfig(const std::string& dataDir) {
         config.difficulty.minValue = j.value("min_value", config.difficulty.minValue);
         config.difficulty.maxValue = j.value("max_value", config.difficulty.maxValue);
     }
+    {
+        auto j = loadJson(dataDir + "/tower_upgrades.json");
+        auto loadStat = [&j](const char* key, StatUpgradeConfig& out) {
+            if (!j.contains(key)) return;
+            const auto& s = j.at(key);
+            out.increment = s.value("increment", out.increment);
+            out.baseCost = s.value("base_cost", out.baseCost);
+            out.costGrowth = s.value("cost_growth", out.costGrowth);
+        };
+        loadStat("damage", config.towerUpgrades.damage);
+        loadStat("attack_speed", config.towerUpgrades.attackSpeed);
+        loadStat("range", config.towerUpgrades.range);
+    }
 
     return config;
 }

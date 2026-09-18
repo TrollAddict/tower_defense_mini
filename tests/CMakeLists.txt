@@ -5,3 +5,7 @@ add_test(NAME flow_field_test COMMAND flow_field_test)
 add_executable(wave_escalation_test wave_escalation_test.cpp)
 target_link_libraries(wave_escalation_test PRIVATE td_mini_core)
 add_test(NAME wave_escalation_test COMMAND wave_escalation_test)
+
+add_executable(tower_upgrade_test tower_upgrade_test.cpp)
+target_link_libraries(tower_upgrade_test PRIVATE td_mini_core)
+add_test(NAME tower_upgrade_test COMMAND tower_upgrade_test)

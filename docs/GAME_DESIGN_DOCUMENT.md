@@ -138,7 +138,17 @@ once placed until the player removes them.
   not an oversight.
 - **Wall shape restriction:** `no shape restriction — any
   wall layout is legal as long as §7's reachability check still passes.
-- **Upgrade model:** none — no leveling, no tech tree (§9).
+- **Upgrade model:** **revised from the original "none" scope.** Three global,
+  permanent stat upgrades -- damage, attack speed, range -- purchased with currency
+  (keys 3/4/5 in-game). "Global" is the operative word: a purchase applies to every
+  tower on the field at once, already-placed or future, not to an individually
+  selected tower. This is a deliberate scope choice, not a simplification of a bigger
+  system: with exactly one tower type, per-tower leveling would need a whole
+  tower-selection UI (click a placed tower, see its own level/cost) for a benefit that
+  doesn't exist yet (there's nothing to differentiate one tower from another). Each
+  stat's increment-per-level and cost-growth-per-level live in
+  `data/tower_upgrades.json` (GDD §11's "config, not hardcoded" rule). Still no tech
+  tree (§9) — these are flat purchases, not gated behind research or prerequisites.
 - **Ammo/upkeep economy:** none — placement is a one-time currency cost, no per-shot or
   per-tick resource consumption.
 - **Power/logistics grid:** none — no influence-radius requirement for towers to
@@ -194,7 +204,9 @@ version of it — see the callout below.
 - **Resource list:** one currency name, bone. No raw materials, no
   population, no tiers.
 - **Income sources:** currency earned per enemy kill 1 ,with bonus being the number of waves completed. wave 1 gives 1 bonus at completion, wave 10 gives 10 bonus.
-- **Spend sinks:** placing a tower or placing a wall tower cost: 5, wall cost: 3. No upkeep, no repair
+- **Spend sinks:** placing a tower or placing a wall (tower cost: 5, wall cost: 3), plus
+  the global tower stat upgrades added in §6 (damage/attack speed/range, each with its
+  own escalating cost per level in `data/tower_upgrades.json`). No upkeep, no repair
   (nothing to repair — see §6), no tech.
 - **Refund rule:** a placement that gets auto-reverted by §7 refunds its full cost — the
   player should never lose currency to an attempt that never actually took effect.

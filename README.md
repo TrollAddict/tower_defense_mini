@@ -44,6 +44,9 @@ ctest --test-dir build --output-on-failure
   - `1` / `2` -- select Tower / Wall to place
   - Left click -- place the selected structure at the cell under the cursor
   - Right click -- remove whatever's at the cell under the cursor
+  - `3` / `4` / `5` -- spend currency to buy the next level of tower damage / attack
+    speed / range. These are global: every tower on the field gets the upgrade at
+    once, not just newly-placed ones.
   - `WASD` / arrow keys -- pan the camera
   - Mouse wheel -- zoom
   - `Home` -- zoom out to fit the whole map
@@ -58,8 +61,8 @@ ctest --test-dir build --output-on-failure
 - `src/ecs/` -- ECS component definitions (entt).
 - `src/game/` -- gameplay systems (combat, movement, waves, placement) and the
   SFML-facing `Game`/`RenderSystem`.
-- `data/*.json` -- tower/wall/enemy/economy/wave/difficulty numbers. Edit these to
-  rebalance without touching code (GDD §11).
+- `data/*.json` -- tower/wall/enemy/economy/wave/difficulty/tower-upgrade numbers.
+  Edit these to rebalance without touching code (GDD §11).
 - `docs/GAME_DESIGN_DOCUMENT.md` -- the design doc this build implements.
 
 ## Known gaps vs. the GDD

@@ -11,6 +11,7 @@
 #include "game/CombatSystem.hpp"
 #include "game/GameState.hpp"
 #include "game/PlacementController.hpp"
+#include "game/TowerUpgrades.hpp"
 #include "game/WaveDirector.hpp"
 
 namespace td {
@@ -42,6 +43,7 @@ private:
     std::optional<GameState> gameState_;
     std::optional<PlacementController> placement_;
     std::optional<WaveDirector> waveDirector_;
+    std::optional<TowerUpgrades> towerUpgrades_;
     StructureType selectedStructure_ = StructureType::Tower;
     ShotList frameShots_;
 

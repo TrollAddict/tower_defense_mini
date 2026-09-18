@@ -47,6 +47,21 @@ struct DifficultyConfig {
     int maxValue = 99;
 };
 
+// A single purchasable stat track: each level adds `increment` to the base stat and
+// costs baseCost * costGrowth^currentLevel (rounded), so cost escalates the more it's
+// already been bought.
+struct StatUpgradeConfig {
+    float increment = 0.0f;
+    int baseCost = 1;
+    float costGrowth = 1.5f;
+};
+
+struct TowerUpgradesConfig {
+    StatUpgradeConfig damage{1.0f, 8, 1.5f};
+    StatUpgradeConfig attackSpeed{0.25f, 8, 1.5f};
+    StatUpgradeConfig range{0.5f, 10, 1.5f};
+};
+
 struct GameConfig {
     TowerConfig tower;
     WallConfig wall;
@@ -54,6 +69,7 @@ struct GameConfig {
     EconomyConfig economy;
     WaveConfig waves;
     DifficultyConfig difficulty;
+    TowerUpgradesConfig towerUpgrades;
 };
 
 // Loads every data/*.json file that backs the GDD's "config, not hardcoded" rule

@@ -1,7 +1,7 @@
 {
   "base_enemy_count": 5,
   "growth_rate_per_wave": 0.25,
-  "spawn_interval_seconds": 0.75,
+  "spawn_interval_seconds": 0.5,
   "time_between_waves_seconds": 6.0,
   "initial_build_phase_seconds": 30.0
 }

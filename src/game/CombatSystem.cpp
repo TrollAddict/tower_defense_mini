@@ -6,11 +6,12 @@
 
 namespace td {
 
-void updateCombat(entt::registry& registry, GameState& state, const GameConfig& config, float dtSeconds,
-                   ShotList& outShots) {
-    const float range = config.tower.rangeTiles;
+void updateCombat(entt::registry& registry, GameState& state, const GameConfig& config, const TowerUpgrades& upgrades,
+                   float dtSeconds, ShotList& outShots) {
+    const float range = upgrades.effectiveRangeTiles();
     const float rangeSq = range * range;
-    const float cooldownDuration = 1.0f / std::max(0.01f, config.tower.attacksPerSecond);
+    const float cooldownDuration = 1.0f / std::max(0.01f, upgrades.effectiveAttacksPerSecond());
+    const float damage = upgrades.effectiveDamage();
 
     auto towers = registry.view<TowerState, Position>();
     auto enemies = registry.view<Position, Health, EnemyTag>();
@@ -39,7 +40,7 @@ void updateCombat(entt::registry& registry, GameState& state, const GameConfig& 
 
         tower.cooldownRemaining = cooldownDuration;
         auto& health = enemies.get<Health>(best);
-        health.current -= config.tower.damage;
+        health.current -= damage;
         outShots.emplace_back(towerPos, enemies.get<Position>(best));
 
         if (health.current <= 0.0f) {

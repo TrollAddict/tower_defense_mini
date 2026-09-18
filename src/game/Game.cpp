@@ -81,6 +81,12 @@ void Game::handleEvents() {
                     zoom_ = fitZoom();
                 } else if (keyPressed->code == sf::Keyboard::Key::Enter) {
                     waveDirector_->skipIntermission();
+                } else if (keyPressed->code == sf::Keyboard::Key::Num3) {
+                    towerUpgrades_->purchase(UpgradeStat::Damage, *gameState_);
+                } else if (keyPressed->code == sf::Keyboard::Key::Num4) {
+                    towerUpgrades_->purchase(UpgradeStat::AttackSpeed, *gameState_);
+                } else if (keyPressed->code == sf::Keyboard::Key::Num5) {
+                    towerUpgrades_->purchase(UpgradeStat::Range, *gameState_);
                 }
             } else if (state_ == AppState::GameOver) {
                 if (keyPressed->code == sf::Keyboard::Key::Enter) {
@@ -184,6 +190,7 @@ void Game::startNewRun() {
     gameState_->difficulty() = menuDifficulty_;
     placement_.emplace(*grid_, flowField_, registry_, *gameState_, config_);
     waveDirector_.emplace(*grid_, registry_, *gameState_, config_);
+    towerUpgrades_.emplace(config_);
     selectedStructure_ = StructureType::Tower;
 
     // Start zoomed in enough to actually see towers/enemies (tile == 1 screen px at
@@ -202,10 +209,11 @@ void Game::updatePlaying(float dtSeconds) {
     panCamera(dtSeconds);
 
     frameShots_.clear();
-    updateCombat(registry_, *gameState_, config_, dtSeconds, frameShots_);
+    updateCombat(registry_, *gameState_, config_, *towerUpgrades_, dtSeconds, frameShots_);
     updateMovement(registry_, *grid_, flowField_, *gameState_, config_, dtSeconds);
     waveDirector_->update(dtSeconds);
     placement_->update(dtSeconds);
+    towerUpgrades_->update(dtSeconds);
 
     if (gameState_->isCastleDestroyed()) {
         state_ = AppState::GameOver;
@@ -263,7 +271,7 @@ CellCoord Game::pixelToCell(sf::Vector2i pixel) const {
 }
 
 void Game::handlePlayingClick(sf::Vector2i pixel, bool isLeftButton) {
-    if (pixel.y < 60) return; // reserve the top HUD strip from placement clicks
+    if (pixel.y < 100) return; // reserve the top HUD strip (now two HUD lines + help text) from placement clicks
 
     const CellCoord cell = pixelToCell(pixel);
     if (!grid_->inBounds(cell.x, cell.y)) return;
@@ -291,7 +299,12 @@ void Game::renderPlaying() {
     hud.config = &config_;
     hud.state = &(*gameState_);
     hud.waveDirector = &(*waveDirector_);
-    hud.notification = placement_->hasActiveNotification() ? placement_->notification() : std::string();
+    hud.upgrades = &(*towerUpgrades_);
+    if (placement_->hasActiveNotification()) {
+        hud.notification = placement_->notification();
+    } else if (towerUpgrades_->hasActiveNotification()) {
+        hud.notification = towerUpgrades_->notification();
+    }
     renderHud(window_, font_, hud);
 }
 

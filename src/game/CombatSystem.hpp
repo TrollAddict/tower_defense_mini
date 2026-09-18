@@ -8,6 +8,7 @@
 #include "core/Config.hpp"
 #include "ecs/Components.hpp"
 #include "game/GameState.hpp"
+#include "game/TowerUpgrades.hpp"
 
 namespace td {
 
@@ -16,9 +17,11 @@ namespace td {
 using ShotList = std::vector<std::pair<Position, Position>>;
 
 // The single tower type (GDD §6) targets the nearest enemy in range and fires at its
-// configured rate. No upgrade tiers, no splash, no ammo -- there's nothing else for
-// combat to do at this scope.
-void updateCombat(entt::registry& registry, GameState& state, const GameConfig& config, float dtSeconds,
-                   ShotList& outShots);
+// current rate/damage/range -- `upgrades` supplies those as base-stat-plus-global-
+// upgrade-level (see TowerUpgrades), so every tower reflects the latest purchased
+// level uniformly. No splash, no ammo -- there's nothing else for combat to do at
+// this scope.
+void updateCombat(entt::registry& registry, GameState& state, const GameConfig& config, const TowerUpgrades& upgrades,
+                   float dtSeconds, ShotList& outShots);
 
 } // namespace td
