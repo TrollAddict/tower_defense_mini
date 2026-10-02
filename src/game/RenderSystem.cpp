@@ -98,7 +98,7 @@ void drawSpriteCentered(sf::RenderWindow& window, const sf::Texture& texture, sf
 } // namespace
 
 bool WorldTextures::load(const std::string& assetsDir) {
-    if (!tileset.loadFromFile(assetsDir + "/TX Tileset Grass.png") || !tower.loadFromFile(assetsDir + "/tower.png") ||
+    if (!tileset.loadFromFile(assetsDir + "/TX Tileset Grass.png") || !tower.loadFromFile(assetsDir + "/archer_tower.png") ||
         !wall.loadFromFile(assetsDir + "/wall.png") || !enemy.loadFromFile(assetsDir + "/TX Player.png")) {
         return false;
     }
